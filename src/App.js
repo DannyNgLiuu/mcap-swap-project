@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-import Dropdown from './dropdown'; 
+import Dropdown from './dropdown';
+import axios from 'axios';
 
-//images
 import bitcoinImage from './images/bitcoin.png';
 import ethereumImage from './images/ethereum.png';
 import solanaImage from './images/solana.png';
@@ -18,10 +18,86 @@ const items = [
 ];
 
 export default function App() {
-  const [selectedA, setSelectedA] = useState({ text: 'Select A', img: null, id: null });
-  const [selectedB, setSelectedB] = useState({ text: 'Select B', img: null, id: null });
+  const [selectedA, setSelectedA] = useState({ text: 'Select A', img: null, id: null, price: null });
+  const [selectedB, setSelectedB] = useState({ text: 'Select B', img: null, id: null, price: null });
   const [marketCapText, setMarketCapText] = useState('');
+  const [marketCapA, setMarketCapA] = useState(null);
+  const [marketCapB, setMarketCapB] = useState(null);
   const glowRef = useRef(null);
+
+  //cache object to store market cap values
+  const marketCapCache = useRef({});
+
+  //fetch market caps for selected coins
+  useEffect(() => {
+    const fetchMarketCaps = async () => {
+      if (selectedA.id && selectedB.id) {
+        const cacheKeyA = selectedA.id;
+        const cacheKeyB = selectedB.id;
+
+        //check the cache first
+        if (marketCapCache.current[cacheKeyA] && marketCapCache.current[cacheKeyB]) {
+          setMarketCapA(marketCapCache.current[cacheKeyA]);
+          setMarketCapB(marketCapCache.current[cacheKeyB]);
+        } else {
+          try {
+            const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${selectedA.id},${selectedB.id}&vs_currencies=usd&include_market_cap=true`);
+            const marketCapAValue = response.data[selectedA.id].usd_market_cap;
+            const marketCapBValue = response.data[selectedB.id].usd_market_cap;
+
+            //update state and cache
+            setMarketCapA(marketCapAValue);
+            setMarketCapB(marketCapBValue);
+            marketCapCache.current[cacheKeyA] = marketCapAValue; //cache the value
+            marketCapCache.current[cacheKeyB] = marketCapBValue; //cache the value
+          } catch (error) {
+            console.error("Error fetching market caps:", error);
+          }
+        }
+      }
+    };
+
+    fetchMarketCaps();
+  }, [selectedA, selectedB]);
+
+  useEffect(() => {
+    if (selectedA.text !== 'Select A' && selectedB.text !== 'Select B') {
+      //format the market caps without decimals
+      const formattedMarketCapA = marketCapA?.toLocaleString('en-US', { maximumFractionDigits: 0 }) || "0";
+      const formattedMarketCapB = marketCapB?.toLocaleString('en-US', { maximumFractionDigits: 0 }) || "0";
+
+      const priceOfSelectedA = selectedA.price || 0;
+      const marketCapAValue = parseFloat(marketCapA) || 1; // Avoid division by zero
+      const marketCapBValue = parseFloat(marketCapB) || 1; // Avoid division by zero
+
+      //clculation
+      const result = (marketCapBValue / marketCapAValue) * priceOfSelectedA;
+      const multipler = (marketCapBValue / marketCapAValue);
+      const formattedResult = result.toLocaleString('en-US', { maximumFractionDigits: 2 });
+      const formattedMultiplier = multipler.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      const colorMultiplier = parseFloat(formattedMultiplier) >= 1.00 ? 'green' : 'red';
+
+      const formattedText = `
+      <div style="font-size: 30px; margin-bottom: 25px;">
+        The price of ${selectedA.symbol} with the market cap of ${selectedB.symbol} <br />
+      </div>
+      <div style="font-size: 50px; font-weight: bold; margin-bottom: 25px;">
+        $${formattedResult} <span style="color: ${colorMultiplier}; font-size: 35px;">(${formattedMultiplier}x)</span> <br />
+      </div>
+      <div style="font-size: 30px; margin-bottom: 10px;">
+        ${selectedA.symbol} mcap $${formattedMarketCapA} <br />
+      </div>
+      <div style="font-size: 30px;">
+        ${selectedB.symbol} mcap $${formattedMarketCapB}
+      </div>
+    `;
+
+      setMarketCapText(formattedText);
+    } else {
+      setMarketCapText('');
+    }
+  }, [selectedA, selectedB, marketCapA, marketCapB]);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -55,14 +131,6 @@ export default function App() {
     setSelectedB(temp);
   };
 
-  useEffect(() => {
-    if (selectedA.text !== 'Select A' && selectedB.text !== 'Select B') {
-      setMarketCapText(`The price of ${selectedA.symbol} with the market cap of ${selectedB.symbol}`);
-    } else {
-      setMarketCapText(''); //reset if not both selected
-    }
-  }, [selectedA, selectedB]);
-
   return (
     <div className="app-container">
       <h1 className="centered-text">Show the price of A <br /> with the market cap of B</h1>
@@ -85,10 +153,8 @@ export default function App() {
         </div>
       </div>
       {marketCapText && (
-        <div className="market-cap-box">
-          <p>{marketCapText}</p>
-        </div>
+        <div className="market-cap-box" dangerouslySetInnerHTML={{ __html: marketCapText }} />
       )}
     </div>
-  );
+  );  
 }

@@ -147,9 +147,9 @@ body {
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
-  font-size: 35px;
+  font-size: 50px;
   font-weight: bold;
-  margin-top: 70px;
+  margin-top: 50px;
   z-index: 10;/* makes sure the text is above other elements */
   color: white;
 }
@@ -161,13 +161,12 @@ h2 {
 
 .market-cap-box {
   position: absolute;
-  margin-top: 375px;
-  padding: 15px 40px;
+  margin-top: 400px;
+  padding: 15px 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
   background: #0D1218;
   color: white;
-  font-size: 18px;
   text-align: center;
   border: 2px solid grey;
 }
