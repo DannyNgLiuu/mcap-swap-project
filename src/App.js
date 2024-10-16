@@ -14,7 +14,7 @@ const items = [
   { text: 'Ethereum', img: ethereumImage, id: 'ethereum', symbol: 'ETH' },
   { text: 'Solana', img: solanaImage, id: 'solana', symbol: 'SOL' },
   { text: 'Binance Coin', img: binancecoinImage, id: 'binancecoin', symbol: 'BNB' },
-  { text: 'Avalanche', img: avalancheImage, id: 'avalanche', symbol: 'AVAX'},
+  { text: 'Avalanche', img: avalancheImage, id: 'avalanche-2', symbol: 'AVAX'},
 ];
 
 export default function App() {
