@@ -2,23 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
-//imported images
-import bitcoinImage from './images/bitcoin.png';
-import ethereumImage from './images/ethereum.png';
-import solanaImage from './images/solana.png';
-import binancecoinImage from './images/bnb.png';
-import avalancheImage from './images/avax.png';
-
-//array of items for dropdown
-const items = [
-  { text: 'Bitcoin', img: bitcoinImage, id: 'bitcoin' },
-  { text: 'Ethereum', img: ethereumImage, id: 'ethereum' },
-  { text: 'Solana', img: solanaImage, id: 'solana' },
-  { text: 'Binance Coin', img: binancecoinImage, id: 'binancecoin' },
-  { text: 'Avalanche', img: avalancheImage, id: 'avalanche-2' },
-];
-
-function Dropdown({ selected, setSelected }) {
+function Dropdown({ selected, setSelected, items }) {
   const [isOpen, setIsOpen] = useState(false);
   const [prices, setPrices] = useState({});
 
@@ -35,7 +19,7 @@ function Dropdown({ selected, setSelected }) {
     };
 
     fetchPrices();
-  }, []);
+  }, [items]);
   
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -60,8 +44,8 @@ function Dropdown({ selected, setSelected }) {
           <span style={{ display: 'flex', alignItems: 'center' }}>
             {selected.text}
             <span style={{ marginLeft: '10px' }}>
-              {selected.id === 'bitcoin' && prices[selected.id]?.usd 
-                ? `$${prices[selected.id].usd.toFixed(2)}` //two decimals for bitcoin
+              {selected.id && prices[selected.id]?.usd 
+                ? `$${prices[selected.id].usd.toFixed(2)}` //two decimals for selected coin
                 : prices[selected.id]?.usd ? `$${prices[selected.id].usd}` : ''}
             </span>
           </span>

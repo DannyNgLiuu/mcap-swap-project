@@ -1,10 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-import Dropdown from './dropdown';
+import Dropdown from './dropdown'; 
+
+//images
+import bitcoinImage from './images/bitcoin.png';
+import ethereumImage from './images/ethereum.png';
+import solanaImage from './images/solana.png';
+import binancecoinImage from './images/bnb.png';
+import avalancheImage from './images/avax.png';
+
+const items = [
+  { text: 'Bitcoin', img: bitcoinImage, id: 'bitcoin', symbol: 'BTC' },
+  { text: 'Ethereum', img: ethereumImage, id: 'ethereum', symbol: 'ETH' },
+  { text: 'Solana', img: solanaImage, id: 'solana', symbol: 'SOL' },
+  { text: 'Binance Coin', img: binancecoinImage, id: 'binancecoin', symbol: 'BNB' },
+  { text: 'Avalanche', img: avalancheImage, id: 'avalanche', symbol: 'AVAX'},
+];
 
 export default function App() {
-  const [selectedA, setSelectedA] = useState({ text: 'Select A', img: null });
-  const [selectedB, setSelectedB] = useState({ text: 'Select B', img: null });
+  const [selectedA, setSelectedA] = useState({ text: 'Select A', img: null, id: null });
+  const [selectedB, setSelectedB] = useState({ text: 'Select B', img: null, id: null });
+  const [marketCapText, setMarketCapText] = useState('');
   const glowRef = useRef(null);
 
   useEffect(() => {
@@ -17,10 +33,9 @@ export default function App() {
     };
 
     const handleMouseOut = (e) => {
-      //hides glow around mouse if it's off the screen
       if (e.relatedTarget === null) {
         if (glowRef.current) {
-          glowRef.current.style.opacity = 0; //hide the glow
+          glowRef.current.style.opacity = 0; //hides the glow
         }
       }
     };
@@ -34,12 +49,19 @@ export default function App() {
     };
   }, []);
 
-  //swaps the selected coins by the click of the swap symbol
   const handleSwap = () => {
     const temp = selectedA;
     setSelectedA(selectedB);
     setSelectedB(temp);
   };
+
+  useEffect(() => {
+    if (selectedA.text !== 'Select A' && selectedB.text !== 'Select B') {
+      setMarketCapText(`The price of ${selectedA.symbol} with the market cap of ${selectedB.symbol}`);
+    } else {
+      setMarketCapText(''); //reset if not both selected
+    }
+  }, [selectedA, selectedB]);
 
   return (
     <div className="app-container">
@@ -48,7 +70,7 @@ export default function App() {
         <div ref={glowRef} className="mouse-glow" />
         <div className="dropdown-container">
           <h2>Select A</h2>
-          <Dropdown selected={selectedA} setSelected={setSelectedA} />
+          <Dropdown selected={selectedA} setSelected={setSelectedA} items={items} />
         </div>
         <span
           className="swap-icon"
@@ -59,9 +81,14 @@ export default function App() {
         </span>
         <div className="dropdown-container">
           <h2>Select B</h2>
-          <Dropdown selected={selectedB} setSelected={setSelectedB} />
+          <Dropdown selected={selectedB} setSelected={setSelectedB} items={items} />
         </div>
       </div>
+      {marketCapText && (
+        <div className="market-cap-box">
+          <p>{marketCapText}</p>
+        </div>
+      )}
     </div>
   );
 }
