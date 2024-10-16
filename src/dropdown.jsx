@@ -36,7 +36,7 @@ function Dropdown({ selected, setSelected }) {
 
     fetchPrices();
   }, []);
-
+  
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
