@@ -30,6 +30,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  margin-top: 245px;
 }
 
 .dropdown .dropdown-button {
@@ -156,6 +157,7 @@ body {
 h2 {
   text-align: center;
   color: grey;
+  margin-bottom: 10px;
 }
 
 .market-cap-box {
