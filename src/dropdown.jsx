@@ -26,8 +26,8 @@ function Dropdown({ selected, setSelected, items }) {
   };
 
   const handleSelection = (item) => {
-    const price = prices[item.id]?.usd; // Get the price of the selected item
-    setSelected({ ...item, price }); // Pass the item with price to App.js
+    const price = prices[item.id]?.usd; //get the price of the selected item
+    setSelected({ ...item, price }); //pass the item with price to App.js
     setIsOpen(false);
   };
   
