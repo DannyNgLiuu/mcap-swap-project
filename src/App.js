@@ -46,8 +46,10 @@ export default function App() {
       <h1 className="centered-text">Show the price of A <br /> with the market cap of B</h1>
       <div className="container">
         <div ref={glowRef} className="mouse-glow" />
-        <h2>Select A</h2>
-        <Dropdown selected={selectedA} setSelected={setSelectedA} />
+        <div className="dropdown-container">
+          <h2>Select A</h2>
+          <Dropdown selected={selectedA} setSelected={setSelectedA} />
+        </div>
         <span
           className="swap-icon"
           onClick={handleSwap}
@@ -55,8 +57,10 @@ export default function App() {
         >
           ⇄
         </span>
-        <h2>Select B</h2>
-        <Dropdown selected={selectedB} setSelected={setSelectedB} />
+        <div className="dropdown-container">
+          <h2>Select B</h2>
+          <Dropdown selected={selectedB} setSelected={setSelectedB} />
+        </div>
       </div>
     </div>
   );

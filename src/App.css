@@ -87,6 +87,8 @@ body {
   margin: 0 10px; /*space between dropdowns*/
   display: flex;
   align-items: center;
+  margin-top: 10px;
+  transform: translateY(18px);
 }
 
 .swap-icon:hover {
@@ -149,4 +151,5 @@ body {
 h2 {
   text-align: center; /* Center the text */
   margin: 10px 0; /* Add some space above and below */
+  color: grey;
 }
